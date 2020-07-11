@@ -25,13 +25,14 @@ SECRET_KEY = 'r=f4o6779a2k!9zz5(5tre5=e^-w#-qo-b+6j)u+3^dj9vpfbv'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*',]
 
 
 # Application definition
 
 INSTALLED_APPS = [
     'simpleui',
+    'import_export',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,6 +51,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #配置跨域问题中间件
+    'web.utils.middlewares.CorsMiddlewarse'
 ]
 
 ROOT_URLCONF = 'GkWeb.urls'
@@ -83,8 +86,11 @@ DATABASES = {
         'NAME': 'gk_db',
         'USER': 'root',
         'PASSWORD': 'toor',
-        'HOST': '192.168.10.120',
-        'PORT': '3306',
+        'HOST': '121.37.162.150',
+        # 'HOST': '127.0.0.1',
+        'PORT': '3307',
+        # 'HOST': '116.63.170.14',
+        # 'PORT': '3307',
         }
 }
 
@@ -129,6 +135,53 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+#配置reids 缓存
+CACHES = {
+    "default":{
+        "BACKEND":"django_redis.cache.RedisCache",
+        "LOCATION":"redis://:toor@121.37.162.150:6379/1",
+        # "LOCATION":"redis://:toor@127.0.0.1:6379/1",
+        # "LOCATION":"redis://116.63.170.14:6379/1",
+        # "LOCATION":"redis://:toor@192.168.10.120:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+#redis的timeout
+REDIS_TIMEOUT=7*24*60*60
+CUBES_REDIS_TIMEOUT=60*60
+NEVER_REDIS_TIMEOUT=365*24*60*60
+#redis的key
+
+#学校信息列表
+REDIS_COLLEGEINFO = 'collegeinfo'
+#理科调档线
+REDIS_SCICOLLEGELINE = 'scicollegeline'   #这里面存储的是经过group by后的结果
+REDIS_ALLSCICOLLEGELINE = 'allscicollegeline'  #这里面存储原始结果
+#文科调档线
+REDIS_ARTSCOLLEGELINE = 'artscollegeline'              #这里面存储的是经过group by后的结果
+REDIS_ALLARTSCOLLEGELINE = 'allartscollegeline'        #这里面存储原始结果
+#理科招生计划
+REDIS_SCIPLAN = 'sciplan'
+#文科招生计划
+REDIS_ARTSPLAN = 'artsplan'
+
+
+#配置限速
+# REST_FRAMEWORK = {
+#     #限速设置
+#     'DEFAULT_THROTTLE_CLASSES': (
+#             'rest_framework.throttling.AnonRateThrottle',   # 未登陆用户
+#             'rest_framework.throttling.UserRateThrottle'    # 登陆用户
+#         ),
+#     'DEFAULT_THROTTLE_RATES': {
+#         'anon': '3/minute',         # 每分钟可以请求两次
+#         'user': '5/minute'          # 每分钟可以请求五次
+#     }
+# }
+
 
 #配置默认主题
 SIMPLEUI_DEFAULT_THEME = 'admin.lte.css'
@@ -197,9 +250,25 @@ SIMPLEUI_CONFIG = {
             'icon': 'fa fa-user',
             'url': '/admin/web/collegeinfo/'
         },{
+            'name': '招生简章',
+            'icon': 'fa fa-user',
+            'url': '/admin/web/enrollmentgulde/'
+        },{
             'name': '专业实力',
             'icon': 'fa fa-user',
             'url': '/admin/web/majorability/'
+        },{
+            'name': '专业库',
+            'icon': 'fa fa-user',
+            'url': '/admin/web/majorinfo/'
+        },{
+            'name': '录取批次',
+            'icon': 'fa fa-user',
+            'url': '/admin/web/order/'
+        },{
+            'name': '省份',
+            'icon': 'fa fa-user',
+            'url': '/admin/web/province/'
         }]
     },{
         'app': 'myapp',
@@ -213,6 +282,28 @@ SIMPLEUI_CONFIG = {
             'name': '文科录取情况',
             'icon': 'fa fa-user',
             'url': '/admin/web/artsenroll/'
+        }]
+    },{
+        'app': 'myapp',
+        'name': '招生计划',
+        'icon': 'fas fa-user-shield',
+        'models': [{
+            'name': '理科招生计划',
+            'icon': 'fa fa-user',
+            'url': '/admin/web/sciplan/'
+        },{
+            'name': '文科招生计划',
+            'icon': 'fa fa-user',
+            'url': '/admin/web/artsplan/'
+        }]
+    },{
+        'app': 'myapp',
+        'name': '系统管理',
+        'icon': 'fas fa-user-shield',
+        'models': [{
+            'name': '用户',
+            'icon': 'fa fa-user',
+            'url': '/admin/web/user/'
         }]
     }]
 }

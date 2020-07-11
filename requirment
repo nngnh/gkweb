@@ -1,0 +1,11 @@
+安装 musql的Docker容器 使用的是mysql 5.7
+安装 PyMySQL  pip install PyMySQL
+conda install mysqlclient
+安装redis的Docker容器
+安装rest-framework  pip install djangorestframework
+安装导入导出插件  pip install django-import-export
+安装simpleui  pip install django-simpleui
+安装redis pip install django-redis
+pip install drf-extensions
+
+
